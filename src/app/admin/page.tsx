@@ -1,3 +1,7 @@
+import { redirect } from "next/navigation";
+
+import { DASHBOARD_ROUTE } from "@/constants/routes";
+
 export default function Admin() {
-  return <p>admin</p>;
+  return redirect(DASHBOARD_ROUTE);
 }

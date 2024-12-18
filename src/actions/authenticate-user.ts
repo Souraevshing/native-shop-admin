@@ -1,7 +1,5 @@
 "use server";
 
-import { NextResponse } from "next/server";
-
 import { createClient } from "@/utils/supabase/server";
 
 const authenticateUser = async (email: string, password: string) => {
@@ -14,11 +12,11 @@ const authenticateUser = async (email: string, password: string) => {
 
     if (error) {
       console.error(error.message);
-      throw new Error(error.message);
+      throw error;
     }
   } catch (err) {
     console.error(err);
-    NextResponse.json({ message: err });
+    throw err;
   }
 };
 
