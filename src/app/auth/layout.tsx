@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import RenderMounted from "@/components/render-mounted";
 import { ADMIN_ROUTE } from "@/constants/routes";
 import { ADMIN } from "@/constants/user-types";
 import { createClient } from "@/utils/supabase/server";
@@ -30,5 +31,5 @@ export default async function AuthLayout({
     }
   }
 
-  return <>{children}</>;
+  return <RenderMounted>{children}</RenderMounted>;
 }

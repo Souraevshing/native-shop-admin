@@ -1,9 +1,8 @@
 "use client";
 
-import { LoaderIcon } from "lucide-react";
+import { Eye, EyeClosedIcon, LoaderIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 import { authenticateUser } from "@/actions/authenticate-user";
 import { Button } from "@/components/ui/button";
@@ -22,6 +21,7 @@ import { FormData, useLoginForm } from "@/utils/schema/login-schema";
 export default function Auth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const router = useRouter();
 
@@ -38,14 +38,9 @@ export default function Auth() {
       setLoading(true);
 
       try {
-        await toast.promise(authenticateUser(email, password), {
-          loading: "Logging in...",
-          success: "Login successful!",
-          error: (err) =>
-            err instanceof Error ? err.message : "An unknown error occurred",
-        });
-
+        await authenticateUser(email, password);
         setIsAuthenticated(true);
+        router.push(ADMIN_ROUTE);
       } catch (err) {
         setIsAuthenticated(false);
         console.error(err);
@@ -88,7 +83,7 @@ export default function Auth() {
                   </FormControl>
                   {errors.email?.message && (
                     <FormMessage className="font-medium text-sm">
-                      {errors.email!.message}
+                      {errors.email.message}
                     </FormMessage>
                   )}
                 </FormItem>
@@ -100,20 +95,32 @@ export default function Auth() {
               control={control}
               name="password"
               render={({ field }) => (
-                <FormItem className="grid gap-2">
+                <FormItem className="grid gap-2 relative">
                   <FormLabel htmlFor="password">
                     Password
                     <sup className="text-red-500 text-lg">*</sup>
                   </FormLabel>
-                  <FormControl>
+                  <div className="relative">
                     <Input
                       id="password"
-                      type="password"
+                      type={passwordVisible ? "text" : "password"}
                       placeholder="Enter your password"
                       aria-label="password"
                       {...field}
                     />
-                  </FormControl>
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-3 flex items-center"
+                      onClick={() => setPasswordVisible((prev) => !prev)}
+                      aria-label="Toggle password visibility"
+                    >
+                      {passwordVisible ? (
+                        <EyeClosedIcon className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.password?.message && (
                     <FormMessage className="font-medium text-sm">
                       {errors.password.message}
@@ -128,7 +135,7 @@ export default function Auth() {
               variant={"outline"}
               size={"icon"}
               type="submit"
-              className="w-full hover:bg-zinc-900 hover:text-white"
+              className="w-full hover:bg-zinc-900 dark:hover:bg-white dark:hover:text-black hover:text-white"
             >
               {loading ? <LoaderIcon className="animate-spin" /> : "Log In"}
             </Button>

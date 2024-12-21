@@ -8,6 +8,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
+import RenderMounted from "@/components/render-mounted";
+import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,29 +34,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster
-          duration={3000}
-          gap={5}
-          position="top-center"
-          theme="dark"
-          visibleToasts={3}
-          hotkey={["esc", "escape"]}
-          icons={{
-            loading: <LoaderIcon className="animate-spin" />,
-            success: <CheckCircle2Icon className="text-green-500" />,
-            warning: <CircleAlertIcon className="text-yellow-500" />,
-            error: <TriangleAlertIcon className="text-red-500" />,
-          }}
-          toastOptions={{
-            closeButton: false,
-            duration: 3000,
-          }}
-        />
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster
+            duration={3000}
+            gap={5}
+            position="top-center"
+            theme="dark"
+            visibleToasts={3}
+            hotkey={["esc", "escape"]}
+            icons={{
+              loading: <LoaderIcon className="animate-spin" />,
+              success: <CheckCircle2Icon className="text-green-500" />,
+              warning: <CircleAlertIcon className="text-yellow-500" />,
+              error: <TriangleAlertIcon className="text-red-500" />,
+            }}
+            toastOptions={{
+              closeButton: false,
+              duration: 3000,
+            }}
+          />
+          <main>
+            <RenderMounted>{children}</RenderMounted>
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );
