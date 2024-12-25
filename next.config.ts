@@ -1,4 +1,3 @@
-import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -6,10 +5,6 @@ const nextConfig: NextConfig = {
     buildActivityPosition: "bottom-right",
     appIsrStatus: true,
     buildActivity: true,
-  },
-  compiler: {
-    emotion: true,
-    removeConsole: process.env.NODE_ENV === "production",
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -20,12 +15,6 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       },
     ],
-  },
-  webpack(config, { dev, isServer }) {
-    if (!dev && !isServer) {
-      config.optimization.minimizer.push(new CssMinimizerPlugin());
-    }
-    return config;
   },
   experimental: {
     scrollRestoration: true,
