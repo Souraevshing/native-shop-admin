@@ -13,7 +13,7 @@ export type Category = {
 export type CategoryWithProducts = {
   created_at: string;
   id: number;
-  image: string;
+  imageUrl: string;
   name: string;
   products: ProductWithCategory[];
   slug: string;

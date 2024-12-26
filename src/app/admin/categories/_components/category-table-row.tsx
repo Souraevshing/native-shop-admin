@@ -61,7 +61,7 @@ export const CategoryTableRow = ({
             alt="Product image"
             className="aspect-square rounded-md object-cover"
             height="64"
-            src={category.image}
+            src={category.imageUrl}
             width="64"
           />
         </TableCell>
