@@ -54,6 +54,9 @@ const nextConfig: NextConfig = {
         },
       },
     },
+    serverActions: {
+      bodySizeLimit: "2mb",
+    },
   },
   compress: true,
   poweredByHeader: false,

@@ -24,6 +24,7 @@ export default async function AuthLayout({
     }
 
     if (data.type === "ADMIN") {
+      console.log(data);
       return redirect("/admin");
     }
   }
