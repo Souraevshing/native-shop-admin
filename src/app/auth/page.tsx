@@ -1,12 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2Icon } from "lucide-react";
+import { EyeClosedIcon, EyeIcon, LoaderIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { authenticateUser } from "@/actions/authenticate-user";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -36,6 +37,7 @@ export default function AuthPage() {
   });
 
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -43,9 +45,10 @@ export default function AuthPage() {
     setIsAuthenticating(true);
 
     try {
-      console.log(email, password);
+      await authenticateUser(email, password);
       router.push("/admin");
-    } catch {
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsAuthenticating(false);
     }
@@ -83,31 +86,44 @@ export default function AuthPage() {
               name="password"
               render={({ field }) => (
                 <FormItem className="grid gap-2">
-                  <div className="flex items-center">
-                    <FormLabel htmlFor="password">Password</FormLabel>
-                  </div>
+                  <FormLabel htmlFor="password">Password</FormLabel>
+
                   <FormControl>
-                    <Input
-                      disabled={isAuthenticating}
-                      id="password"
-                      placeholder="Enter password"
-                      type="password"
-                      required
-                      {...field}
-                      {...form.register("password")}
-                    />
+                    <div className="relative">
+                      <Input
+                        disabled={isAuthenticating}
+                        id="password"
+                        placeholder="Enter password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        {...field}
+                        {...form.register("password")}
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeClosedIcon className="h-5 w-5" />
+                        ) : (
+                          <EyeIcon className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button
-              disabled={isAuthenticating}
+              variant={"outline"}
+              disabled={form.formState.isSubmitting}
               type="submit"
-              className="w-full"
+              className="w-full hover:bg-black hover:text-white"
             >
-              {isAuthenticating ? (
-                <Loader2Icon className="animate-spin mr-2" size={20} />
+              {form.formState.isSubmitting ? (
+                <LoaderIcon className="animate-spin mr-2" size={20} />
               ) : (
                 "Login"
               )}

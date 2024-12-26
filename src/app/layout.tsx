@@ -1,6 +1,16 @@
+import {
+  BadgeCheckIcon,
+  BadgeInfoIcon,
+  CircleXIcon,
+  LoaderIcon,
+  OctagonAlertIcon,
+  ShieldAlertIcon,
+} from "lucide-react";
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 
+import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 const jetBrainsMono = JetBrains_Mono({
@@ -52,7 +62,6 @@ export const viewport: Viewport = {
   themeColor: "#000000",
   initialScale: 1,
   minimumScale: 1,
-  viewportFit: "auto",
 };
 
 export default function RootLayout({
@@ -61,11 +70,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${jetBrainsMono.variable} ${jetBrainsMono.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider attribute={"class"}>
+          <main>{children}</main>
+          <Toaster
+            position="top-center"
+            richColors
+            duration={3000}
+            visibleToasts={3}
+            icons={{
+              success: <BadgeCheckIcon className="w-4 h-4" />,
+              error: <ShieldAlertIcon className="w-4 h-4" />,
+              warning: <OctagonAlertIcon className="w-4 h-4" />,
+              info: <BadgeInfoIcon className="w-4 h-4" />,
+              loading: <LoaderIcon className="w-4 h-4" />,
+              close: <CircleXIcon className="w-4 h-4" />,
+            }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );
