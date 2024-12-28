@@ -18,7 +18,7 @@ export const ToggleTheme = () => {
       {theme === "dark" ? (
         <SunDimIcon color="#ffc857" className="w-6 h-6" />
       ) : (
-        <SunMoonIcon color="#2c2b3c" className="w-6 h-6" />
+        <SunMoonIcon color="#575757" className="w-6 h-6" />
       )}
     </Toggle>
   );
