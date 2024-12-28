@@ -16,9 +16,9 @@ export const ToggleTheme = () => {
       className="active:animate-out transition-all duration-300"
     >
       {theme === "dark" ? (
-        <SunDimIcon className="w-6 h-6" />
+        <SunDimIcon color="#ffc857" className="w-6 h-6" />
       ) : (
-        <SunMoonIcon className="w-6 h-6" />
+        <SunMoonIcon color="#2c2b3c" className="w-6 h-6" />
       )}
     </Toggle>
   );
