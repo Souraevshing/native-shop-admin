@@ -38,7 +38,7 @@ export const Navbar = () => {
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Package2Icon color="#89fc00" className="h-6 w-6" />
+          <Package2Icon color="#52b788" className="h-6 w-6" />
         </Link>
         {NAVBAR_LINKS.map(({ id, href, label }) => {
           return (
