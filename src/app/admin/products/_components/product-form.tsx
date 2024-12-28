@@ -1,6 +1,8 @@
+import { LoaderIcon } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,15 +30,6 @@ import {
 import { CreateOrUpdateProductSchema } from "@/schemas/create-product.schema";
 import { Category } from "../../../../../types/types";
 
-type Props = {
-  form: UseFormReturn<CreateOrUpdateProductSchema>;
-  onSubmit: (data: CreateOrUpdateProductSchema) => void;
-  categories: Category[];
-  setIsProductModalOpen: Dispatch<SetStateAction<boolean>>;
-  isProductModalOpen: boolean;
-  defaultValues: CreateOrUpdateProductSchema | null;
-};
-
 export const ProductForm = ({
   form,
   onSubmit,
@@ -44,7 +37,14 @@ export const ProductForm = ({
   setIsProductModalOpen,
   isProductModalOpen,
   defaultValues,
-}: Props) => {
+}: {
+  form: UseFormReturn<CreateOrUpdateProductSchema>;
+  onSubmit: (data: CreateOrUpdateProductSchema) => void;
+  categories: Category[];
+  setIsProductModalOpen: Dispatch<SetStateAction<boolean>>;
+  isProductModalOpen: boolean;
+  defaultValues: CreateOrUpdateProductSchema | null;
+}) => {
   const isSubmitting = form.formState.isSubmitting;
 
   useEffect(() => {
@@ -211,8 +211,16 @@ export const ProductForm = ({
               />
 
               <DialogFooter>
-                <Button disabled={isSubmitting} type="submit">
-                  Add Product
+                <Button
+                  variant={"outline"}
+                  disabled={isSubmitting}
+                  type="submit"
+                >
+                  {isSubmitting ? (
+                    <LoaderIcon className="w-4 h-4" />
+                  ) : (
+                    "Add Product"
+                  )}
                 </Button>
               </DialogFooter>
             </form>

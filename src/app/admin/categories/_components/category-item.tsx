@@ -1,11 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircle } from "lucide-react";
+import { PlusCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 
 import {
@@ -32,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useToast } from "@/hooks/useToast";
 import {
   createCategorySchema,
   CreateCategorySchema,
@@ -59,6 +59,7 @@ export default function CategoriesItemPage({
     },
   });
 
+  const { showSuccess, showError, showInfo, showPromise } = useToast();
   const router = useRouter();
 
   const submitCategoryHandler: SubmitHandler<CreateCategorySchema> = async (
@@ -72,7 +73,11 @@ export default function CategoriesItemPage({
       const file = new File([data.image[0]], fileName);
       const formData = new FormData();
       formData.append("file", file);
-
+      showPromise(imageUploadHandler(formData), {
+        loading: "Uploading Image",
+        success: "Image uploaded successfully",
+        error: "Error uploading image",
+      });
       return imageUploadHandler(formData);
     };
 
@@ -85,7 +90,7 @@ export default function CategoriesItemPage({
           form.reset();
           router.refresh();
           setIsCreateCategoryModalOpen(false);
-          toast.success("Category created successfully");
+          showSuccess("Category created successfully");
         }
         break;
       }
@@ -103,12 +108,13 @@ export default function CategoriesItemPage({
             form.reset();
             router.refresh();
             setIsCreateCategoryModalOpen(false);
-            toast.success("Category updated successfully");
+            showInfo("Category updated successfully");
           }
         }
       }
 
       default:
+        showError("Invalid intent");
         console.error("Invalid intent");
     }
   };
@@ -116,7 +122,7 @@ export default function CategoriesItemPage({
   const deleteCategoryHandler = async (id: number) => {
     await deleteCategory(id);
     router.refresh();
-    toast.success("Category deleted successfully");
+    showError("Category deleted successfully");
   };
 
   return (
@@ -131,14 +137,15 @@ export default function CategoriesItemPage({
           >
             <DialogTrigger asChild>
               <Button
-                size="sm"
+                size={"sm"}
+                variant={"outline"}
                 className="h-8 gap-1"
                 onClick={() => {
                   setCurrentCategory(null);
                   setIsCreateCategoryModalOpen(true);
                 }}
               >
-                <PlusCircle className="h-3.5 w-3.5" />
+                <PlusCircleIcon className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add Category
                 </span>

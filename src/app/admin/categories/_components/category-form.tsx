@@ -1,6 +1,8 @@
+import { LoaderIcon } from "lucide-react";
 import { useEffect } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
+import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,8 +21,7 @@ export const CategoryForm = ({
   onSubmit,
   defaultValues,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: any;
+  form: ReturnType<typeof useForm<CreateCategorySchema>>;
   onSubmit: SubmitHandler<CreateCategorySchema>;
   defaultValues: CreateCategorySchema | null;
 }) => {
@@ -73,8 +74,8 @@ export const CategoryForm = ({
             </FormItem>
           )}
         />
-        <Button disabled={isSubmitting} type="submit" variant="outline">
-          Submit
+        <Button variant={"outline"} disabled={isSubmitting} type="submit">
+          {isSubmitting ? <LoaderIcon className="w-4 h-4" /> : "Submit"}
         </Button>
       </form>
     </Form>

@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/useToast";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -41,13 +42,21 @@ export default function AuthPage() {
 
   const router = useRouter();
 
+  const { showSuccess, showError } = useToast();
+
   const onSubmit = async ({ email, password }: z.infer<typeof loginSchema>) => {
     setIsAuthenticating(true);
 
     try {
       await authenticateUser(email, password);
+      showSuccess("Logged in successfully");
       router.push("/admin");
     } catch (error) {
+      if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError("Something went wrong");
+      }
       console.error(error);
     } finally {
       setIsAuthenticating(false);

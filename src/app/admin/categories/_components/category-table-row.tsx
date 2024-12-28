@@ -1,5 +1,5 @@
-import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
+import moment from "moment";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { useToast } from "@/hooks/useToast";
 import { CreateCategorySchema } from "@/schemas/create-category.schema";
 import { CategoryWithProducts } from "../../../../../types/types";
 
@@ -38,6 +39,8 @@ export const CategoryTableRow = ({
 }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const { showError, showInfo } = useToast();
+
   const handleEditClick = (category: CreateCategorySchema) => {
     setCurrentCategory({
       name: category.name,
@@ -45,11 +48,13 @@ export const CategoryTableRow = ({
       intent: "update",
       slug: category.slug,
     });
+    showInfo("Editing category");
     setIsCreateCategoryModalOpen(true);
   };
 
   const handleDelete = async () => {
     await deleteCategoryHandler(category.id);
+    showError("Category deleted successfully");
     setIsDeleteDialogOpen(false);
   };
 
@@ -67,7 +72,7 @@ export const CategoryTableRow = ({
         </TableCell>
         <TableCell className="font-medium">{category.name}</TableCell>
         <TableCell className="md:table-cell">
-          {format(new Date(category.created_at), "yyyy-MM-dd")}
+          {moment(category.created_at).format("DD MMM YYYY")}
         </TableCell>
         <TableCell className="md:table-cell">
           {category.products && category.products.length > 0 ? (
@@ -132,7 +137,10 @@ export const CategoryTableRow = ({
               >
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)}>
+              <DropdownMenuItem
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className="text-red-600 hover:bg-red-600 hover:text-white !important"
+              >
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

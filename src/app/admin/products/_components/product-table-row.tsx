@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 
@@ -65,8 +65,9 @@ export const ProductTableRow = ({
       </TableCell>
       <TableCell>
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
+          className="mr-2"
           onClick={() =>
             handleEditClick({
               title: product.title,
@@ -79,10 +80,10 @@ export const ProductTableRow = ({
             })
           }
         >
-          <Pencil className="h-4 w-4" />
+          <PencilIcon color="blue" className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
           onClick={() =>
             setCurrentProduct({
@@ -96,7 +97,8 @@ export const ProductTableRow = ({
             })
           }
         >
-          <Trash2
+          <Trash2Icon
+            color="red"
             className="h-4 w-4"
             onClick={() => setIsDeleteModalOpen(true)}
           />

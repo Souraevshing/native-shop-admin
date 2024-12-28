@@ -1,11 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon } from "lucide-react";
+import { PlusCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 
 import { imageUploadHandler } from "@/actions/fetch-category";
@@ -29,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useToast } from "@/hooks/useToast";
 import {
   createOrUpdateProductSchema,
   CreateOrUpdateProductSchema,
@@ -65,7 +65,18 @@ export default function ProductsItemPage({
     },
   });
 
+  const { showSuccess, showError, showInfo, showPromise } = useToast();
+
   const router = useRouter();
+
+  // upload multiple images by unique url
+  const uploadFile = async (file: File) => {
+    const uniqueId = uuid();
+    const fileName = `product/product-${uniqueId}-${file.name}`;
+    const formData = new FormData();
+    formData.append("file", file, fileName);
+    return imageUploadHandler(formData);
+  };
 
   const productCreateUpdateHandler = async (
     data: CreateOrUpdateProductSchema
@@ -81,14 +92,6 @@ export default function ProductsItemPage({
       intent = "create",
     } = data;
 
-    const uploadFile = async (file: File) => {
-      const uniqueId = uuid();
-      const fileName = `product/product-${uniqueId}-${file.name}`;
-      const formData = new FormData();
-      formData.append("file", file, fileName);
-      return imageUploadHandler(formData);
-    };
-
     let heroImageUrl: string | undefined;
     let imageUrls: string[] = [];
 
@@ -96,11 +99,21 @@ export default function ProductsItemPage({
       const imagePromise = Array.from(heroImage).map((file) =>
         uploadFile(file as File)
       );
+
+      //merge all promises into one
+      const mergedPromise = Promise.all(imagePromise);
+
+      showPromise(mergedPromise, {
+        loading: "Uploading images...",
+        success: "Images uploaded successfully",
+        error: "Error uploading images",
+      });
+
       try {
-        [heroImageUrl] = await Promise.all(imagePromise);
+        [heroImageUrl] = await mergedPromise;
       } catch (error) {
         console.error("Error uploading image:", error);
-        toast.error("Error uploading image");
+        showError("Error uploading image");
         return;
       }
     }
@@ -112,60 +125,77 @@ export default function ProductsItemPage({
         imageUrls = (await Promise.all(imagesPromises)) as string[];
       } catch (error) {
         console.error("Error uploading images:", error);
-        toast.error("Error uploading images");
+        showError("Error uploading images");
         return;
       }
     }
 
-    switch (intent) {
-      case "create": {
-        if (heroImageUrl && imageUrls.length > 0) {
-          await createProduct({
-            category: Number(category),
-            images: imageUrls,
-            heroImage: heroImageUrl,
-            maxQuantity: Number(maxQuantity),
-            price: Number(price),
-            title,
-          });
-          form.reset();
-          router.refresh();
-          setIsProductModalOpen(false);
-          toast.success("Product created successfully");
+    try {
+      switch (intent) {
+        case "create": {
+          if (heroImageUrl && imageUrls.length > 0) {
+            await createProduct({
+              category: Number(category),
+              images: imageUrls,
+              heroImage: heroImageUrl,
+              maxQuantity: Number(maxQuantity),
+              price: Number(price),
+              title,
+            });
+            form.reset();
+            router.refresh();
+            setIsProductModalOpen(false);
+            showSuccess("Product created successfully");
+          }
+          break;
         }
-        break;
-      }
-      case "update": {
-        if (heroImageUrl && imageUrls.length > 0 && slug) {
-          await updateProduct({
-            category: Number(category),
-            heroImage: heroImageUrl!,
-            imagesUrl: imageUrls,
-            maxQuantity: Number(maxQuantity),
-            price: Number(price),
-            title,
-            slug,
-          });
-          form.reset();
-          router.refresh();
-          setIsProductModalOpen(false);
-          toast.success("Product updated successfully");
+        case "update": {
+          if (heroImageUrl && imageUrls.length > 0 && slug) {
+            await updateProduct({
+              category: Number(category),
+              heroImage: heroImageUrl!,
+              imagesUrl: imageUrls,
+              maxQuantity: Number(maxQuantity),
+              price: Number(price),
+              title,
+              slug,
+            });
+            form.reset();
+            router.refresh();
+            setIsProductModalOpen(false);
+            showInfo("Product updated successfully");
+          }
+          break;
         }
-        break;
-      }
 
-      default:
-        console.error("Invalid intent");
+        default:
+          console.error("Invalid intent");
+          showError("Invalid intent");
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        showError(err.message);
+      } else {
+        showError("Error deleting product");
+      }
     }
   };
 
   const deleteProductHandler = async () => {
     if (currentProduct?.slug) {
-      await deleteProduct(currentProduct.slug);
-      router.refresh();
-      toast.success("Product deleted successfully");
-      setIsDeleteModalOpen(false);
-      setCurrentProduct(null);
+      try {
+        await deleteProduct(currentProduct.slug);
+        router.refresh();
+        showSuccess("Product deleted successfully");
+        setIsDeleteModalOpen(false);
+        setCurrentProduct(null);
+      } catch (err) {
+        if (err instanceof Error) {
+          showError(err.message);
+        } else {
+          showError("Error deleting product");
+        }
+      }
     }
   };
 
@@ -173,14 +203,16 @@ export default function ProductsItemPage({
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Products Management</h1>
+          <h1 className="text-2xl font-bold">Products </h1>
           <Button
+            size={"sm"}
+            variant={"outline"}
             onClick={() => {
               setCurrentProduct(null);
               setIsProductModalOpen(true);
             }}
           >
-            <PlusIcon className="mr-2 h-4 w-4" /> Add Product
+            <PlusCircleIcon className="mr-2 h-4 w-4" /> Add Product
           </Button>
         </div>
 
