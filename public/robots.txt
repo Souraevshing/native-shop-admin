@@ -1,0 +1,13 @@
+# *
+User-agent: *
+Allow: /
+
+# Googlebot
+User-agent: Googlebot
+Disallow: /private
+
+# Host
+Host: https://native-shop-admin.vercel.app/
+
+# Sitemaps
+Sitemap: https://native-shop-admin.vercel.app/sitemap.xml
