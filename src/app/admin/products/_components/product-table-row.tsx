@@ -67,7 +67,7 @@ export const ProductTableRow = ({
         <Button
           variant="outline"
           size="icon"
-          className="mr-2"
+          className="mr-2 text-blue-600 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white"
           onClick={() =>
             handleEditClick({
               title: product.title,
@@ -80,11 +80,12 @@ export const ProductTableRow = ({
             })
           }
         >
-          <PencilIcon color="blue" className="h-4 w-4" />
+          <PencilIcon className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
           size="icon"
+          className="text-red-600 hover:bg-red-600 hover:text-white focus:bg-red-600 focus:text-white"
           onClick={() =>
             setCurrentProduct({
               title: product.title,
@@ -98,7 +99,6 @@ export const ProductTableRow = ({
           }
         >
           <Trash2Icon
-            color="red"
             className="h-4 w-4"
             onClick={() => setIsDeleteModalOpen(true)}
           />

@@ -174,15 +174,11 @@ export default function CategoriesItemPage({
           <Table className="min-w-[600px]">
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px] sm:table-cell">
-                  <span className="sr-only">Image</span>
-                </TableHead>
+                <TableHead className="w-[100px] sm:table-cell">Image</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead className="md:table-cell">Created at</TableHead>
                 <TableHead className="md:table-cell">Products</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
+                <TableHead className="md:table-cell">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

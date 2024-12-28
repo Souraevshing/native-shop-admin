@@ -17,7 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -126,7 +125,6 @@ export const CategoryTableRow = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[160px]">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
                   handleEditClick({
@@ -139,7 +137,7 @@ export const CategoryTableRow = ({
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setIsDeleteDialogOpen(true)}
-                className="text-red-600 hover:bg-red-600 hover:text-white !important"
+                className="text-red-600 hover:bg-red-600 hover:text-white focus:bg-red-600 focus:text-white"
               >
                 Delete
               </DropdownMenuItem>
